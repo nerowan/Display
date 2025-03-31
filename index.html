@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>自媒体研究展示</title>
+  <!-- 字体图标 & Chart.js 等外部资源 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      /* 将基准字号稍微放大，保证在各设备上更易阅读 */
+      font-size: 17px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft Yahei", sans-serif;
+    }
+
+    body {
+      background-color: #f9f9f9;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    /* ============= 顶部导航栏 ============= */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #0f1928;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      z-index: 999;
+    }
+
+    .navbar .logo {
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .navbar ul {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar ul li {
+      margin-left: 1rem;
+    }
+
+    .navbar ul li a {
+      color: #fff;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+
+    .navbar ul li a:hover {
+      color: #e2b227;
+    }
+
+    /* ============= 顶部Banner ============= */
+    .hero {
+      margin-top: 60px; /* 避免被导航遮挡 */
+      background: url('images/hero.jpg') no-repeat center center/cover;
+      height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      color: #fff;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(15, 25, 40, 0.5);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 1rem;
+    }
+
+    .hero-content h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .hero-content p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-content button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      cursor: pointer;
+      background: #e2b227;
+      color: #000;
+      font-size: 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    .hero-content button:hover {
+      background: #fcc845;
+    }
+
+    /* ============= 通用区块设置 ============= */
+    .section {
+      padding: 2rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section h2 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .section p {
+      max-width: 900px;
+      margin: 1rem auto;
+      line-height: 1.8;
+      text-align: center;
+      color: #666;
+    }
+
+    /* ============= 卡片展示区 ============= */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .card img {
+      width: 100%;
+      display: block;
+    }
+
+    .card .card-content {
+      padding: 1rem;
+    }
+
+    .card .card-content h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card .card-content p {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* ============= 互动按钮 ============= */
+    .interaction {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .like-btn {
+      color: #666;
+      border: none;
+      background: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.3s;
+      margin-right: 1rem;
+    }
+    .like-btn.liked {
+      color: #e95959;
+    }
+
+    .comment-btn {
+      color: #666;
+      border: none;
+      background: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .comment-btn:hover {
+      color: #0f1928;
+    }
+
+    /* ============= 评论模态对话框 ============= */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: none;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal {
+      background: #fff;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 4px;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+    }
+    .modal h3 {
+      margin-bottom: 1rem;
+    }
+    .modal textarea {
+      width: 80%;
+      height: 80px;
+      margin: 0 auto;
+      display: block;
+      resize: none;
+    }
+    .modal .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #333;
+    }
+    .modal button {
+      margin-top: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      background: #0f1928;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .modal button:hover {
+      background: #e2b227;
+      color: #000;
+    }
+
+    /* ============= 研究数据及图表区域 ============= */
+    .data-section {
+      margin-top: 2rem;
+    }
+    .data-section h3 {
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 1.3rem;
+    }
+    .chart-container {
+      max-width: 900px;
+      margin: 1rem auto;
+      background: #fff;
+      border-radius: 6px;
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      /* 修复图表无限扩展问题：固定高度或相对高度 */
+      position: relative;
+      height: 400px; /* 您可根据需求自行调整 */
+    }
+    .chart-container canvas {
+      /* 让canvas充满容器，高度受chart-container控制 */
+      width: 100% !important;
+      height: 100% !important; 
+      display: block;
+    }
+
+    /* ============= 可折叠的数据表 ============= */
+    .table-container {
+      max-width: 900px;
+      margin: 1rem auto;
+      text-align: center;
+    }
+    .toggle-btn {
+      padding: 0.6rem 1.2rem;
+      background: #0f1928;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    .toggle-btn:hover {
+      background: #e2b227;
+      color: #000;
+    }
+    .table-scroll {
+      max-height: 400px;
+      overflow-y: auto;
+      display: none; /* 初始隐藏 */
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+    thead {
+      background-color: #f0f0f0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    th {
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* ============= 响应式设置 ============= */
+    @media (min-width: 768px) {
+      .hero-content h1 {
+        font-size: 2.4rem;
+      }
+      .hero-content p {
+        font-size: 1.2rem;
+      }
+      .section p {
+        font-size: 1rem;
+      }
+      .modal textarea {
+        width: 90%;
+      }
+      th, td {
+        font-size: 1rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ============= 导航栏 ============= -->
+<nav class="navbar">
+  <div class="logo">自媒体研究展示</div>
+  <ul>
+    <li><a href="#intro">研究简介</a></li>
+    <li><a href="#motivation">研究动机</a></li>
+    <li><a href="#process">研究过程</a></li>
+    <li><a href="#gallery">成果案例</a></li>
+    <li><a href="#data">研究数据</a></li>
+  </ul>
+</nav>
+
+<!-- ============= 顶部Banner ============= -->
+<div class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>欢迎来到我的研究成果展示</h1>
+    <p>探索北京高中生在短视频平台上的角色转变：从观众到创作者</p>
+    <button onclick="scrollToSection('intro')">了解更多</button>
+  </div>
+</div>
+
+<!-- ============= 研究简介部分 ============= -->
+<section class="section" id="intro">
+  <h2>研究背景与简介</h2>
+  <p>
+    随着短视频平台（如抖音、快手、B 站）的蓬勃发展，越来越多青少年
+    不仅仅是被动的内容消费者，也逐渐成为活跃的内容创作者。本研究聚焦
+    北京地区高中生群体，通过问卷调查与深度访谈，探讨他们在自媒体时代
+    的使用特征、角色转换动因，以及所面临的挑战。
+  </p>
+</section>
+
+<!-- ============= 研究动机 ============= -->
+<section class="section" id="motivation">
+  <h2>研究动机</h2>
+  <p>
+    我在小学六年级时便开始在 B 站上传作品，收获了不少粉丝与播放量，这让我
+    对“青少年自媒体创作”的话题产生了浓厚兴趣。同时，我也观察到很多同学
+    在社交平台上经历了从“观看者”到“发布者”的角色转变。但学界普遍关注
+    “青少年沉迷风险”而忽视其主动表达和创造的潜力，促使我决定围绕这一正向
+    视角展开更深入的研究。
+  </p>
+</section>
+
+<!-- ============= 研究过程 ============= -->
+<section class="section" id="process">
+  <h2>研究过程</h2>
+  <p>
+    本研究采用线上问卷调查法，并在部分学校中开展定点访谈。问卷主要涵盖
+    “人口统计信息”、“自媒体使用特征”、“功能性/批判性消费与生产能力”、
+    “创作动机”、“学习意愿”等内容，共回收 583 份有效问卷；随后，我使用
+    SPSS 进行描述性统计和相关分析，并从中筛选出典型的受访者进行深度访谈，
+    以了解他们在短视频创作过程中所遇到的技术、时间与社会支持等方面的问题。
+    通过量化与质性资料的整合，为后续提出家校引导与平台优化建议提供证据基础。
+  </p>
+</section>
+
+<!-- ============= 作品 / 案例展示卡片 ============= -->
+<section class="section" id="gallery">
+  <h2>研究成果案例</h2>
+  <p>以下为部分研究过程与关键发现的简要展示</p>
+
+  <div class="cards">
+    <!-- 卡片1 -->
+    <div class="card">
+      <img src="images/pic1.jpg" alt="案例图片1"/>
+      <div class="card-content">
+        <h3>使用特征概览</h3>
+        <p>89.47%的受访者既观看也生产内容，仅10.53%仍是单纯观众，可见高中生自媒体创作参与度很高。</p>
+        <div class="interaction">
+          <button class="like-btn" onclick="toggleLike(this)">
+            <i class="fa fa-heart"></i>
+          </button>
+          <button class="comment-btn" onclick="openModal()">
+            <i class="fa fa-commenting"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 卡片2 -->
+    <div class="card">
+      <img src="images/pic2.jpg" alt="案例图片2"/>
+      <div class="card-content">
+        <h3>主要挑战</h3>
+        <p>技术不足（34.58%）、负面评论（30.66%）及家长不支持（27.63%）是高中生在创作中的三大难题。</p>
+        <div class="interaction">
+          <button class="like-btn" onclick="toggleLike(this)">
+            <i class="fa fa-heart"></i>
+          </button>
+          <button class="comment-btn" onclick="openModal()">
+            <i class="fa fa-commenting"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 卡片3 -->
+    <div class="card">
+      <img src="images/pic3.jpg" alt="案例图片3"/>
+      <div class="card-content">
+        <h3>创作频率</h3>
+        <p>21.21%的创作者有固定更新计划，大部分（78.79%）创作并不稳定，常受时间或灵感因素限制。</p>
+        <div class="interaction">
+          <button class="like-btn" onclick="toggleLike(this)">
+            <i class="fa fa-heart"></i>
+          </button>
+          <button class="comment-btn" onclick="openModal()">
+            <i class="fa fa-commenting"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= 研究数据和多图表 ============= -->
+<section class="section data-section" id="data">
+  <h2>研究数据详细展示</h2>
+  <p>以下通过多图表及数据表格，呈现问卷与统计分析的主要结果</p>
+
+  <!-- 图表1: 性别分布 -->
+  <div class="chart-container">
+    <h3>性别分布（Male/Female）</h3>
+    <canvas id="chartGender"></canvas>
+  </div>
+
+  <!-- 图表2: 年级分布 -->
+  <div class="chart-container">
+    <h3>年级分布（共583份样本）</h3>
+    <canvas id="chartGrade"></canvas>
+  </div>
+
+  <!-- 图表3: 观众vs创作者 -->
+  <div class="chart-container">
+    <h3>观众与创作者比例</h3>
+    <canvas id="chartIdentity"></canvas>
+  </div>
+
+  <!-- 图表4: 主要挑战统计 -->
+  <div class="chart-container">
+    <h3>主要挑战占比</h3>
+    <canvas id="chartChallenges"></canvas>
+  </div>
+
+  <!-- 可折叠的数据表：整合更多研究数据 -->
+  <div class="table-container">
+    <button class="toggle-btn" onclick="toggleTable()">展开 / 收起 更多详细数据</button>
+    <div class="table-scroll" id="tableScroll">
+      <table>
+        <thead>
+          <tr>
+            <th>指标/变量</th>
+            <th>含义</th>
+            <th>数据结果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>样本总数</td>
+            <td>有效问卷数</td>
+            <td>583</td>
+          </tr>
+          <tr>
+            <td>性别分布</td>
+            <td>男 56.3%，女 43.7%</td>
+            <td>卡方检验 p=0.19，无显著差异</td>
+          </tr>
+          <tr>
+            <td>年级分布</td>
+            <td>九年级 19.14%，十年级 36.52%，十一年级 25.36%，十二年级 18.98%</td>
+            <td>ANOVA p=0.011，存在显著影响</td>
+          </tr>
+          <tr>
+            <td>功能性消费</td>
+            <td>对平台搜索/筛选/使用的熟练度</td>
+            <td>与“成为创作者”显著正相关 (p<0.01)</td>
+          </tr>
+          <tr>
+            <td>批判性消费</td>
+            <td>对视频内容的评判思维、评论互动</td>
+            <td>与“成为创作者”显著正相关 (p<0.01)</td>
+          </tr>
+          <tr>
+            <td>批判性生产</td>
+            <td>深度策划、多角度创作能力</td>
+            <td>与创作者身份无显著关联 (p>0.05)</td>
+          </tr>
+          <tr>
+            <td>创作频率</td>
+            <td>有固定更新 vs. 不定期更新</td>
+            <td>21.21% 固定，78.79% 不定期</td>
+          </tr>
+          <tr>
+            <td>主要挑战</td>
+            <td>技术不足、负面评论、家人不支持等</td>
+            <td>技术 34.58%，负评 30.66%，不支持 27.63%</td>
+          </tr>
+          <tr>
+            <td>结论与建议</td>
+            <td>家校引导、平台支持</td>
+            <td>深度内容创作尚需培养，心理辅导和技术培训尤为重要</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============= 评论模态对话框 ============= -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <i class="fa fa-times close-modal" onclick="closeModal()"></i>
+    <h3>发表评论</h3>
+    <textarea placeholder="写下您的评论..."></textarea>
+    <button onclick="submitComment()">提交评论</button>
+  </div>
+</div>
+
+<script>
+  // 平滑滚动跳转
+  function scrollToSection(sectionId) {
+    document.getElementById(sectionId).scrollIntoView({ behavior: "smooth" });
+  }
+
+  // 点赞功能
+  function toggleLike(btn) {
+    btn.classList.toggle("liked");
+  }
+
+  // 打开评论弹窗
+  function openModal() {
+    document.getElementById("modalOverlay").style.display = "flex";
+  }
+
+  // 关闭评论弹窗
+  function closeModal() {
+    document.getElementById("modalOverlay").style.display = "none";
+  }
+
+  // 提交评论（仅示例）
+  function submitComment() {
+    alert("感谢您的评论！");
+    closeModal();
+  }
+
+  // 显示/隐藏数据表
+  function toggleTable() {
+    const tableScroll = document.getElementById("tableScroll");
+    // 如果是隐藏状态则显示，否则隐藏
+    tableScroll.style.display =
+      (tableScroll.style.display === "none" || tableScroll.style.display === "")
+        ? "block"
+        : "none";
+  }
+
+  // ============= 图表脚本 =============
+  window.onload = function() {
+    // 初始隐藏表格
+    document.getElementById("tableScroll").style.display = "none";
+
+    // 图表1: 性别分布
+    const ctxGender = document.getElementById('chartGender').getContext('2d');
+    new Chart(ctxGender, {
+      type: 'bar',
+      data: {
+        labels: ['男性', '女性'],
+        datasets: [{
+          label: '百分比(%)',
+          data: [56.3, 43.7],
+          backgroundColor: ['#3498db', '#e74c3c']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: { beginAtZero: true, max: 100 }
+        }
+      }
+    });
+
+    // 图表2: 年级分布
+    const ctxGrade = document.getElementById('chartGrade').getContext('2d');
+    new Chart(ctxGrade, {
+      type: 'bar',
+      data: {
+        labels: ['九年级', '十年级', '十一年级', '十二年级'],
+        datasets: [{
+          label: '百分比(%)',
+          data: [19.14, 36.52, 25.36, 18.98],
+          backgroundColor: ['#1abc9c', '#2ecc71', '#9b59b6', '#f1c40f']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, max: 50 }
+        }
+      }
+    });
+
+    // 图表3: 观众 vs 创作者
+    const ctxIdentity = document.getElementById('chartIdentity').getContext('2d');
+    new Chart(ctxIdentity, {
+      type: 'doughnut',
+      data: {
+        labels: ['既观看也生产内容', '仅观看内容'],
+        datasets: [{
+          label: '身份比例',
+          data: [89.47, 10.53],
+          backgroundColor: ['#e67e22', '#95a5a6']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // 图表4: 主要挑战
+    const ctxChallenges = document.getElementById('chartChallenges').getContext('2d');
+    new Chart(ctxChallenges, {
+      type: 'bar',
+      data: {
+        labels: [
+          '技术不足', '负面评论', '家人不支持',
+          '时间管理', '素材不足', '隐私安全', '吸粉困难'
+        ],
+        datasets: [{
+          label: '占比(%)',
+          data: [34.58, 30.66, 27.63, 19.25, 19.61, 15.86, 17.29],
+          backgroundColor: [
+            '#c0392b','#d35400','#27ae60',
+            '#2980b9','#8e44ad','#7f8c8d','#bdc3c7'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: { beginAtZero: true, max: 40 }
+        }
+      }
+    });
+  };
+</script>
+
+</body>
+</html>
