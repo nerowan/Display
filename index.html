@@ -145,12 +145,30 @@
       color: #333;
     }
 
+    /* 普通段落设置：左对齐 + 首行缩进 */
     .section p {
       max-width: 900px;
       margin: 1rem auto;
       line-height: 1.8;
-      text-align: center;
+      text-align: left;
+      text-indent: 2em; /* 两格缩进 */
       color: #666;
+    }
+
+    /* ============= 作者信息区 ============= */
+    .info-section {
+      background: #fff;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      margin-top: 1rem;
+    }
+    .info-section p {
+      max-width: 900px;
+      margin: 0.5rem auto;
+      text-align: left;
+      text-indent: 2em;
+      color: #444;
     }
 
     /* ============= 卡片展示区 ============= */
@@ -187,6 +205,8 @@
       font-size: 0.9rem;
       color: #555;
       line-height: 1.5;
+      text-align: left;
+      text-indent: 2em;
     }
 
     .card:hover {
@@ -195,7 +215,7 @@
 
     /* ============= 互动按钮 ============= */
     .interaction {
-      text-align: center;
+      text-align: left;
       margin-top: 1rem;
     }
 
@@ -292,14 +312,12 @@
       padding: 1rem;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       text-align: center;
-      /* 修复图表无限扩展问题：固定高度或相对高度 */
       position: relative;
-      height: 400px; /* 您可根据需求自行调整 */
+      height: 400px; /* 固定高度防止无限扩展 */
     }
     .chart-container canvas {
-      /* 让canvas充满容器，高度受chart-container控制 */
       width: 100% !important;
-      height: 100% !important; 
+      height: 100% !important;
       display: block;
     }
 
@@ -307,7 +325,7 @@
     .table-container {
       max-width: 900px;
       margin: 1rem auto;
-      text-align: center;
+      text-align: left;
     }
     .toggle-btn {
       padding: 0.6rem 1.2rem;
@@ -389,10 +407,15 @@
 <div class="hero">
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <h1>欢迎来到我的研究成果展示 万昊轩 BAID高一二班</h1>
-    <p>高中生在自媒体平台上的身份转变：从观众到创作者</p>
+    <h1>欢迎来到我的研究成果展示</h1>
+    <p>探索北京高中生在短视频平台上的角色转变：从观众到创作者</p>
     <button onclick="scrollToSection('intro')">了解更多</button>
   </div>
+</div>
+
+<!-- ============= 作者信息区 ============= -->
+<div class="info-section">
+  <p>姓名：万昊轩 班级：高一二班 学校：BAID</p>
 </div>
 
 <!-- ============= 研究简介部分 ============= -->
@@ -442,7 +465,10 @@
       <img src="images/pic1.jpg" alt="案例图片1"/>
       <div class="card-content">
         <h3>使用特征概览</h3>
-        <p>89.47%的受访者既观看也生产内容，仅10.53%仍是单纯观众，可见高中生自媒体创作参与度很高。</p>
+        <p>
+          89.47%的受访者既观看也生产内容，仅10.53%仍是单纯观众，
+          可见高中生自媒体创作的参与度相当高。
+        </p>
         <div class="interaction">
           <button class="like-btn" onclick="toggleLike(this)">
             <i class="fa fa-heart"></i>
@@ -459,7 +485,10 @@
       <img src="images/pic2.jpg" alt="案例图片2"/>
       <div class="card-content">
         <h3>主要挑战</h3>
-        <p>技术不足（34.58%）、负面评论（30.66%）及家长不支持（27.63%）是高中生在创作中的三大难题。</p>
+        <p>
+          技术不足（34.58%）、负面评论（30.66%）及家长不支持（27.63%）
+          是高中生在创作中面临的三大难题。
+        </p>
         <div class="interaction">
           <button class="like-btn" onclick="toggleLike(this)">
             <i class="fa fa-heart"></i>
@@ -476,7 +505,10 @@
       <img src="images/pic3.jpg" alt="案例图片3"/>
       <div class="card-content">
         <h3>创作频率</h3>
-        <p>21.21%的创作者有固定更新计划，大部分（78.79%）创作并不稳定，常受时间或灵感因素限制。</p>
+        <p>
+          21.21%的创作者有固定更新计划，大部分（78.79%）创作并不稳定，
+          常受时间或灵感因素限制。
+        </p>
         <div class="interaction">
           <button class="like-btn" onclick="toggleLike(this)">
             <i class="fa fa-heart"></i>
@@ -493,7 +525,10 @@
 <!-- ============= 研究数据和多图表 ============= -->
 <section class="section data-section" id="data">
   <h2>研究数据详细展示</h2>
-  <p>以下通过多图表及数据表格，呈现问卷与统计分析的主要结果</p>
+  <p>
+    以下通过多图表及数据表格，呈现问卷与统计分析的主要结果，
+    让大家能更直观地了解本次研究的核心发现。
+  </p>
 
   <!-- 图表1: 性别分布 -->
   <div class="chart-container">
@@ -623,7 +658,6 @@
   // 显示/隐藏数据表
   function toggleTable() {
     const tableScroll = document.getElementById("tableScroll");
-    // 如果是隐藏状态则显示，否则隐藏
     tableScroll.style.display =
       (tableScroll.style.display === "none" || tableScroll.style.display === "")
         ? "block"
